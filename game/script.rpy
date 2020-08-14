@@ -3,11 +3,23 @@ init python:
 
     def options (dic,correct):
         #generate options
-        correct = 0
-#        menu:
-#            if choose correct:
-#                correct = 1
-        return correct
+        #choose random vocab as options
+        opt = [correct]
+        while len(opt) < 5:
+            i = dic.values()[int(random.random()*len(dic))][0]
+            if i != correct and i not in opt:
+                opt.append(i)
+
+        #arrange options randomly
+        rand = [random.random() for i in range(4)]
+        ind = [i[0] for i in sorted(enumerate(rand), key=lambda x:x[1])]
+        opt = [opt[ind[i]] for i in range(4)]
+
+        for i in range(4):
+            if ind[i] == 0:
+                correctInd = i
+
+        return opt, correctInd
 
 
     #intialize a dic for vocabularies
@@ -22,6 +34,8 @@ init python:
 
 # 游戏在此开始。
 
+image p = im.Scale('en.png',450,1000)
+
 label start:
 
     #host of the game
@@ -30,7 +44,8 @@ label start:
     # 显示一个背景。此处默认显示占位图，但您也可以在图片目录添加一个文件
     # （命名为“bg room.png”或“bg room.jpg”）来显示。
 
-    scene bg room
+    scene bg whitehouse:
+        zoom 1.5
 
     # 显示角色立绘。此处使用了占位图，但您也可以在图片目录添加命名为
     # “eileen happy.png”的文件来将其替换掉。
@@ -49,7 +64,7 @@ label start:
 
     scene bg room
     show eileen happy at right
-    show eileen happy at left
+    show p at left
 
     '第[day]天'
 
@@ -74,31 +89,45 @@ label start:
 
     #flashcard setion here
 
-    h '早上{b}好{/b}！(请选择加粗词语的英文翻译)'
+    h '早上{color=#f09fffff}好{/color}！(请选择彩色词语的英文翻译)'
 
+    $opt,correctInd = options(dic, 'Good')
     menu:
-        'Good':
-            $correct+=1
-            '回答正确!'
-        'You':
-            $wrong+=1
-            '回答错误:(\n正确答案：Good'
-        'I':
-            $wrong+=1
-            '回答错误:(\n正确答案：Good'
+        '[opt[0]]':
+            $choose = 0
+        '[opt[1]]':
+            $choose = 1
+        '[opt[2]]':
+            $choose = 2
+        '[opt[3]]':
+            $choose = 3
 
-    h '{b}我{/b}叫Shawn。'
+    if choose == correctInd:
+        $correct += 1
+        '回答正确!'
+    else:
+        $wrong +=1
+        '回答错误:(\n正确答案：Good'
 
+    h '{color=#f09fffff}我{/color}叫Shawn。'
+
+    $opt,correctInd = options(dic, 'I')
     menu:
-        'You':
-            $wrong+=1
-            '回答错误:(\n正确答案：I'
-        'I':
-            $correct+=1
-            '回答正确!'
-        'Good':
-            $wrong+=1
-            '回答错误:(\n正确答案：I'
+        '[opt[0]]':
+            $choose = 0
+        '[opt[1]]':
+            $choose = 1
+        '[opt[2]]':
+            $choose = 2
+        '[opt[3]]':
+            $choose = 3
+
+    if choose == correctInd:
+        $correct += 1
+        '回答正确!'
+    else:
+        $wrong +=1
+        '回答错误:(\n正确答案：I'
 
     h    '请问您叫什么名字？'
 
@@ -106,68 +135,106 @@ label start:
     $name = 'User'
     define e = Character('[name]')
 
-    e '{b}你{/b}好！我叫[name]。'
+    e '{color=#f09fffff}你{/color}好！我叫[name]。'
 
+    $opt,correctInd = options(dic, 'You')
     menu:
-        'Good':
-            $wrong+=1
-            '回答错误:(\n正确答案：You'
-        'You':
-            $correct+=1
-            '回答正确!'
-        'I':
-            $wrong+=1
-            '回答错误:(\n正确答案：You'
+        '[opt[0]]':
+            $choose = 0
+        '[opt[1]]':
+            $choose = 1
+        '[opt[2]]':
+            $choose = 2
+        '[opt[3]]':
+            $choose = 3
 
-    e '我今天{b}早上{/b}刚到美国。'
+    if choose == correctInd:
+        $correct += 1
+        '回答正确!'
+    else:
+        $wrong +=1
+        '回答错误:(\n正确答案：You'
+
+    e '我今天{color=#f09fffff}早上{/color}刚到美国。'
+
+    $opt,correctInd = options(dic, 'Morning')
     menu:
-        'Morning':
-            $correct+=1
-            '回答正确!'
-        'Afternoon':
-            $wrong+=1
-            '回答错误:(\n正确答案：Morning'
-        'Evening':
-            $wrong+=1
-            '回答错误:(\n正确答案：Morning'
+        '[opt[0]]':
+            $choose = 0
+        '[opt[1]]':
+            $choose = 1
+        '[opt[2]]':
+            $choose = 2
+        '[opt[3]]':
+            $choose = 3
+
+    if choose == correctInd:
+        $correct += 1
+        '回答正确!'
+    else:
+        $wrong +=1
+        '回答错误:(\n正确答案：Morning'
 
     h '欢迎到美国来！'
-    h '{b}下午{/b}我带您去吃美国快餐？'
+    h '{color=#f09fffff}下午{/color}我带您去吃美国快餐？'
+    $opt,correctInd = options(dic, 'Afternoon')
     menu:
-        'Morning':
-            $wrong+=1
-            '回答错误:(\n正确答案：Afternoon'
-        'Afternoon':
-            $correct+=1
-            '回答正确!'
-        'Evening':
-            $wrong+=1
-            '回答错误:(\n正确答案：Afternoon'
+        '[opt[0]]':
+            $choose = 0
+        '[opt[1]]':
+            $choose = 1
+        '[opt[2]]':
+            $choose = 2
+        '[opt[3]]':
+            $choose = 3
+
+    if choose == correctInd:
+        $correct += 1
+        '回答正确!'
+    else:
+        $wrong +=1
+        '回答错误:(\n正确答案：Afternoon'
 
     e '好啊！'
-    h '吃完快餐，{b}晚上{/b}您可以在家好好儿休息。'
-    menu:
-        'Morning':
-            $wrong+=1
-            '回答错误:(\n正确答案：Evening'
-        'Afternoon':
-            $wrong+=1
-            '回答错误:(\n正确答案：Evening'
-        'Evening':
-            $correct+=1
-            '回答正确!'
+    h '吃完快餐，{color=#f09fffff}晚上{/color}您可以在家好好儿休息。'
 
-    e '{b}好的{/b}。'
+    $opt,correctInd = options(dic, 'Evening')
     menu:
-        'You':
-            $wrong+=1
-            '回答错误:(\n正确答案：Good'
-        'Good':
-            $correct+=1
-            '回答正确!'
-        'I':
-            $wrong+=1
-            '回答错误:(\n正确答案：Good'
+        '[opt[0]]':
+            $choose = 0
+        '[opt[1]]':
+            $choose = 1
+        '[opt[2]]':
+            $choose = 2
+        '[opt[3]]':
+            $choose = 3
+
+    if choose == correctInd:
+        $correct += 1
+        '回答正确!'
+    else:
+        $wrong +=1
+        '回答错误:(\n正确答案：Evening'
+
+    e '{color=#f09fffff}好的{/color}。'
+
+    $opt,correctInd = options(dic, 'Good')
+    menu:
+        '[opt[0]]':
+            $choose = 0
+        '[opt[1]]':
+            $choose = 1
+        '[opt[2]]':
+            $choose = 2
+        '[opt[3]]':
+            $choose = 3
+
+    if choose == correctInd:
+        $correct += 1
+        '回答正确!'
+    else:
+        $wrong +=1
+        '回答错误:(\n正确答案：Good'
 
     $score=correct/(correct+wrong)
     if score < .8:
